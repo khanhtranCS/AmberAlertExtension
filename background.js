@@ -1,4 +1,3 @@
-
 chrome.runtime.onMessage.addListener (
     function (request, sender, sendResponse) {
 
@@ -6,11 +5,11 @@ chrome.runtime.onMessage.addListener (
 
             navigator.geolocation.getCurrentPosition (function (position) {
                 sendResponse ( {
-                    geoLocation: ( position.coords.latitude + ","+ position.coords.latitude
+                    geoLocation: (
+                          + position.coords.latitude + ","
+                         + position.coords.longitude
                     )
-                });
-            }, function(positionError) {
-                console.error(positionError);
+                } );
             } );
             return true; // Needed because the response is asynchronous
         }

@@ -1,5 +1,4 @@
 
-
 window.onload = function() {
 	setVisible();
 	console.log("This is location" + location);
@@ -12,4 +11,3 @@ function setVisible() {
 	    console.log("123");
 	} );
 }
-
