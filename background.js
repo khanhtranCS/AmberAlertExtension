@@ -1,17 +1,19 @@
-
-chrome.runtime.onMessage.addListener (
+chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
 
         if (request.command == "gimmeGimme") {
+            $.post("https://data.seattle.gov/resource/b7bc-eh2a.json", function (data) {
+                console.log(data);
+            });
 
-            navigator.geolocation.getCurrentPosition (function (position) {
-                sendResponse ( {
-                    geoLocation: ( position.coords.latitude + ","+ position.coords.latitude
+            navigator.geolocation.getCurrentPosition(function (position) {
+                sendResponse({
+                    geoLocation: ( position.coords.latitude + "," + position.coords.latitude
                     )
                 });
-            }, function(positionError) {
+            }, function (positionError) {
                 console.error(positionError);
-            } );
+            });
             return true; // Needed because the response is asynchronous
         }
     }
