@@ -1,4 +1,5 @@
 
+var set = new StringSet();
 window.onload = function() {
 	setVisible();
 	// console.log("This is location" + location);
@@ -31,23 +32,64 @@ function findMissingChild(latitude, longtitude) {
 
 function determineNearby(data, latitude, longitude) {
 	console.log(data);
+	var curr_date = new Date();
+	var curr_string_date = "" + curr_date.getFullYear() + (curr_date.getMonth() + 1) + curr_date.getDate();
+	//console.log(curr_string_date);
 
 	for(var i = 0; i < data.length; i++) {
 		var distance_km = line(latitude, longitude, data[i].latitude, data[i].longitude);
+		var crime_date = new Date(data[i].occurred_date_or_date_range_start);
+		var crime_string_date = "" + crime_date.getFullYear() + (crime_date.getMonth() + 1) + crime_date.getDate();
+		//console.log(crime_string_date);
 		var notif_div = document.getElementById("notif");
 		if (distance_km < 2) {
-			$.post( "https://maps.googleapis.com/maps/api/geocode/json?latlng="+data[i].latitude+"," + data[i].longitude+ "&key=AIzaSyCngncdCEqVb_fy5xpIs1MTxSaYn9sszkc", function( data ) {
-            	$( ".result" ).html( data );
-            	var address = data.results[0]["formatted_address"].split(",");
-            	// findMissingChild(address);
-            	var single_div = document.createElement("div");
-				single_div.innerHTML = address + "555555";
-				notif_div.appendChild(single_div);
-        	});
+			$.post( "https://maps.googleapis.com/maps/api/geocode/json?latlng="+data[i].latitude+"," + data[i].longitude+ "&key=AIzaSyCngncdCEqVb_fy5xpIs1MTxSaYn9sszkc", callbackASDF(i, data, crime_date, distance_km));
 
 		}
 		//console.log(data[i].longitude + " " + data[i].latitude);
 	}
+}
+
+
+function callbackASDF(numberThing, data, crime_date, distance_km) {
+
+            var notif_div = document.getElementById("notif");
+            return function(data_add) {
+                $(".result").html(data);
+                var address = data_add.results[0]["formatted_address"].split(",");
+                // findMissingChild(address);
+                var single_div = document.createElement("div");
+                single_div.className = "small-nof";
+
+                var addr_paragraph = document.createElement("p");
+                var dist_paragraph = document.createElement("p");
+                var time_paragraph = document.createElement("p");
+                var crime_type_paragraph = document.createElement("p");
+                var location_button = document.createElement("div");
+                var a_tag = document.createElement("a");
+
+                addr_paragraph.innerHTML = "Location: " + address;
+                dist_paragraph.innerHTML = "Distance: " + Math.round(distance_km) + " kilometer(s) away";
+                time_paragraph.innerHTML = "Time Occurred: " + crime_date.toDateString() + " " + crime_date.getHours() + ":" + crime_date.getMinutes() + " AM/PM";
+                crime_type_paragraph.innerHTML = "Crime Type: " + data[numberThing].offense_type;
+                
+                var address_map = data_add.results[0]["formatted_address"].replace(/[ ,]+/g, "+");
+
+                location_button.className = "map_button";
+                a_tag.href = "https://google.com/maps/place/"+ address_map;
+                a_tag.innerHTML = "map";
+                a_tag.target="_blank";
+                location_button.appendChild(a_tag);
+
+
+                single_div.appendChild(addr_paragraph);
+                single_div.appendChild(dist_paragraph);
+                single_div.appendChild(time_paragraph);
+                single_div.appendChild(crime_type_paragraph);
+                single_div.appendChild(location_button);
+                notif_div.appendChild(single_div);
+                set.add(data[numberThing].offense_code);
+            };
 }
 
 // return distance
@@ -63,6 +105,32 @@ function line(lat1, lon1, lat2, lon2) {
 
   return R * 2 * Math.asin(Math.sqrt(a));
 
+}
+
+function StringSet() {
+    var setObj = {}, val = {};
+
+    this.add = function(str) {
+        setObj[str] = val;
+    };
+
+    this.contains = function(str) {
+        return setObj[str] === val;
+    };
+
+    this.remove = function(str) {
+        delete setObj[str];
+    };
+
+    this.values = function() {
+        var values = [];
+        for (var i in setObj) {
+            if (setObj[i] === val) {
+                values.push(i);
+            }
+        }
+        return values;
+    };
 }
 
 
