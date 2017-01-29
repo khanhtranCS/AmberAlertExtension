@@ -43,7 +43,7 @@ function determineNearby(data, latitude, longitude) {
 		//console.log(crime_string_date);
 		var notif_div = document.getElementById("notif");
 		if (distance_km < 2) {
-			$.post( "https://maps.googleapis.com/maps/api/geocode/json?latlng="+data[i].latitude+"," + data[i].longitude+ "&key=AIzaSyCngncdCEqVb_fy5xpIs1MTxSaYn9sszkc", callbackASDF(i, data, crime_date, distance_km, latitude, longitude));
+			$.post( "https://maps.googleapis.com/maps/api/geocode/json?latlng="+data[i].latitude+"," + data[i].longitude+ "&sensor=true", callbackASDF(i, data, crime_date, distance_km, latitude, longitude));
 
 		}
 		//console.log(data[i].longitude + " " + data[i].latitude);
